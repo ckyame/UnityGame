@@ -61,6 +61,8 @@
     <Compile Include="Assets\Source\MainMenuState.cs" />
     <Compile Include="Assets\Source\GameState.cs" />
     <Compile Include="Assets\Source\PlayerCollision.cs" />
+    <Compile Include="Assets\Source\EnemyCollision.cs" />
+    <Compile Include="Assets\Source\KillEnemyCollision.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\BayatGames\Free Platform Game Assets\Readme.txt" />

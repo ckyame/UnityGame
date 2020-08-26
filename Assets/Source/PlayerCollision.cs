@@ -13,9 +13,6 @@ public class PlayerCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.tag == "Enemy") 
-        {
-            PlayerHitCallback.Invoke();
-        }
+        PlayerHitCallback.Invoke();
     }
 }

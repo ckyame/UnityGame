@@ -11,6 +11,9 @@ public class GameState : BaseState
     public Rigidbody PlayerRigidBody;
     public float PlayerSpeedUp;
     public float PlayerSpeedSides;
+    public GameObject BunnyIdleAnim;
+    public GameObject BunnyLeftRunAnim;
+    public GameObject BunnyRightRunAnim;
 
     public GameObject UIPanel;
     public GameObject ScoredSprite;
@@ -27,6 +30,8 @@ public class GameState : BaseState
         StartCoroutine(crWatchInput());
         StartCoroutine(crSpawnPlatforms());
         StartCoroutine(crScoreTimer());
+        BunnyLeftRunAnim.SetActive(false);
+        BunnyRightRunAnim.SetActive(false);
     }
 
     public override void EndState()
@@ -90,31 +95,56 @@ public class GameState : BaseState
         {
             if (Input.GetKey(KeyCode.A))
             {
-                PlayerRigidBody.AddForce(Vector3.left * PlayerSpeedSides, ForceMode.Force);
+                Player.position = Vector3.MoveTowards(Player.position, Player.position + (Vector3.left * 5), PlayerSpeedSides * Time.deltaTime);
+                //PlayerRigidBody.AddForce(Vector3.left * PlayerSpeedSides, ForceMode.Force);
             }
             if (Input.GetKey(KeyCode.D))
             {
-                PlayerRigidBody.AddForce(Vector3.right * PlayerSpeedSides, ForceMode.Force);
+                Player.position = Vector3.MoveTowards(Player.position, Player.position + (Vector3.right * 5), PlayerSpeedSides * Time.deltaTime);
+
+                //PlayerRigidBody.AddForce(Vector3.right * PlayerSpeedSides, ForceMode.Force);
             }
             if (Input.GetKeyDown(KeyCode.W) && PlayerRigidBody.velocity.y == 0)
             {
                 PlayerRigidBody.AddForce(Vector3.up * PlayerSpeedUp, ForceMode.Force);
             }
+            if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
+            {
+                PlayerRigidBody.velocity = new Vector3(0, PlayerRigidBody.velocity.y, 0);
+                BunnyLeftRunAnim.SetActive(false);
+                BunnyRightRunAnim.SetActive(false);
+                BunnyIdleAnim.SetActive(true);
+            }
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) 
+            {
+                if (Input.GetKeyDown(KeyCode.A)) 
+                {
+                    BunnyLeftRunAnim.SetActive(true);
+                }
+                if (Input.GetKeyDown(KeyCode.D))
+                {
+                    BunnyRightRunAnim.SetActive(true);
+                }
+
+                BunnyIdleAnim.SetActive(false);        
+            }
+            
             yield return null;
         }
     }
 
     private IEnumerator crScoreTimer() 
     {
-        while (true) 
-        {
-            if (Player.position.y > ScoreThreshold) 
-            {
-                ScoreThreshold = (int)Player.position.y;
-                StartCoroutine(PlayerScored(System.Math.Abs(PlayerRigidBody.velocity.y)));
-            }
-            yield return new WaitForSeconds(1f);
-        }
+        //while (true) 
+        //{
+        //    if (Player.position.y > ScoreThreshold) 
+        //    {
+        //        //ScoreThreshold = (int)Player.position.y;
+        //        //StartCoroutine(PlayerScored(System.Math.Abs(PlayerRigidBody.velocity.y)));
+        //    }
+        //    yield return new WaitForSeconds(1f);
+        //}
+        yield return null;
     }
 
     private IEnumerator crSpawnPlatforms() 
@@ -122,15 +152,19 @@ public class GameState : BaseState
         float i = 5f;
         while (i < 999) 
         {
-            for (i = -2f; i < 1000; i+=3) 
+            for (i = -2f; i < 1000; i += 3)
             {
-                GameObject platform = Instantiate(PlatformPrefab) as GameObject;
-                platform.transform.position = 
-                    (Vector3.up * i) 
-                  + (i % 2 == 0 
-                    ? Vector3.left * Random.Range(-3f, 3f) 
-                    : Vector3.right * Random.Range(-3f, 3f));
-                LoadedPlatforms.Add(platform);
+                for (int j = 0; j < 25; j++)
+                {
+                    GameObject platform = Instantiate(PlatformPrefab) as GameObject;
+                    platform.transform.position =
+                        (Vector3.up * i)
+                      + (i % 2 == 0
+                        ? Vector3.left * Random.Range(-90f, 90f)
+                        : Vector3.right * Random.Range(-90f, 90f));
+                    LoadedPlatforms.Add(platform);
+                    
+                }
                 yield return null;
             }
         }
@@ -139,5 +173,10 @@ public class GameState : BaseState
     private void PlayerLost() 
     {
         GameController.NextState();
+    }
+
+    public void PlayerScoredEvent() 
+    {
+        StartCoroutine(PlayerScored(5f));
     }
 }
