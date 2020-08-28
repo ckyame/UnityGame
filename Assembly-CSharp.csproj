@@ -55,14 +55,14 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Source\EnemyPatrol.cs" />
     <Compile Include="Assets\Source\PostGameState.cs" />
     <Compile Include="Assets\Source\BaseState.cs" />
+    <Compile Include="Assets\Source\KillEnemyCollision.cs" />
     <Compile Include="Assets\Source\Game.cs" />
     <Compile Include="Assets\Source\MainMenuState.cs" />
     <Compile Include="Assets\Source\GameState.cs" />
     <Compile Include="Assets\Source\PlayerCollision.cs" />
-    <Compile Include="Assets\Source\EnemyCollision.cs" />
-    <Compile Include="Assets\Source\KillEnemyCollision.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\BayatGames\Free Platform Game Assets\Readme.txt" />

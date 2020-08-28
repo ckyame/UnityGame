@@ -1,18 +1,23 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.Events;
+﻿using UnityEngine;
 
 public class PlayerCollision : MonoBehaviour
 {
-    [Serializable]
-    public class PlayerHitEvent : UnityEvent { }
+    public GameState GameState;
 
-    [SerializeField]
-    public PlayerHitEvent PlayerHitCallback = new PlayerHitEvent();
+    public GameObject ObjectToDestroy;
+    public bool DestroyOnCollision = false;
+
+    private void Start()
+    {
+        GameState = FindObjectOfType<GameState>();
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
-        PlayerHitCallback.Invoke();
+        GameState.PlayerScoredEvent();
+        if (DestroyOnCollision) 
+        {
+            Destroy(ObjectToDestroy);
+        }
     }
 }

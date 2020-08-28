@@ -32,6 +32,7 @@ public class GameState : BaseState
         StartCoroutine(crScoreTimer());
         BunnyLeftRunAnim.SetActive(false);
         BunnyRightRunAnim.SetActive(false);
+        BunnyIdleAnim.SetActive(true);
     }
 
     public override void EndState()
@@ -93,16 +94,29 @@ public class GameState : BaseState
     {
         while (true)
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
             {
                 Player.position = Vector3.MoveTowards(Player.position, Player.position + (Vector3.left * 5), PlayerSpeedSides * Time.deltaTime);
-                //PlayerRigidBody.AddForce(Vector3.left * PlayerSpeedSides, ForceMode.Force);
+                if (BunnyLeftRunAnim.activeSelf == false)
+                {
+                    BunnyLeftRunAnim.SetActive(true);
+                    BunnyIdleAnim.SetActive(false);
+                }
             }
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
             {
                 Player.position = Vector3.MoveTowards(Player.position, Player.position + (Vector3.right * 5), PlayerSpeedSides * Time.deltaTime);
-
-                //PlayerRigidBody.AddForce(Vector3.right * PlayerSpeedSides, ForceMode.Force);
+                if (BunnyRightRunAnim.activeSelf == false) 
+                {
+                    BunnyRightRunAnim.SetActive(true);
+                    BunnyIdleAnim.SetActive(false);
+                }
+            }
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.A))
+            {
+                BunnyLeftRunAnim.SetActive(false);
+                BunnyRightRunAnim.SetActive(false);
+                BunnyIdleAnim.SetActive(true);
             }
             if (Input.GetKeyDown(KeyCode.W) && PlayerRigidBody.velocity.y == 0)
             {
@@ -150,9 +164,9 @@ public class GameState : BaseState
     private IEnumerator crSpawnPlatforms() 
     {
         float i = 5f;
-        while (i < 999) 
-        {
-            for (i = -2f; i < 1000; i += 3)
+        //while (i < 10) 
+        //{
+            for (i = -2f; i < 100; i += 3)
             {
                 for (int j = 0; j < 25; j++)
                 {
@@ -163,11 +177,12 @@ public class GameState : BaseState
                         ? Vector3.left * Random.Range(-90f, 90f)
                         : Vector3.right * Random.Range(-90f, 90f));
                     LoadedPlatforms.Add(platform);
-                    
+                    yield return null;
                 }
                 yield return null;
             }
-        }
+            yield return null;
+        //}
     }
 
     private void PlayerLost() 
@@ -178,5 +193,6 @@ public class GameState : BaseState
     public void PlayerScoredEvent() 
     {
         StartCoroutine(PlayerScored(5f));
+        PlayerRigidBody.AddForce(Vector3.up * PlayerSpeedUp/2, ForceMode.Force);
     }
 }
